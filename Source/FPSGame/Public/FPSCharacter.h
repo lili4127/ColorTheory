@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 	USkeletalMeshComponent* GunMeshComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
+	UMaterialInstanceDynamic* GunMaterialInst;
+
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
@@ -74,6 +77,16 @@ protected:
 	/** Spawn a bomb */
 	void SpawnBomb();
 
+	/** Gun select */
+	void OrangeGun();
+
+	void PurpleGun();
+
+	void GreenGun();
+
+	/** Change gun and bullet color */
+	void ChangeGun(int x);
+
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
 
@@ -81,6 +94,9 @@ protected:
 	void MoveRight(float Val);
 
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 public:
 	/** Returns Mesh1P subobject **/

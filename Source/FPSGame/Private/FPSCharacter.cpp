@@ -9,7 +9,6 @@
 #include "Animation/AnimSequence.h"
 #include "FPSBombActor.h"
 
-
 AFPSCharacter::AFPSCharacter()
 {
 	// Create a CameraComponent	
@@ -31,7 +30,6 @@ AFPSCharacter::AFPSCharacter()
 	GunMeshComponent->SetupAttachment(Mesh1PComponent, "GripPoint");
 }
 
-
 void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
@@ -40,6 +38,9 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
 	PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &AFPSCharacter::SpawnBomb);
+	PlayerInputComponent->BindAction("OrangeGun", IE_Pressed, this, &AFPSCharacter::OrangeGun);
+	PlayerInputComponent->BindAction("PurpleGun", IE_Pressed, this, &AFPSCharacter::PurpleGun);
+	PlayerInputComponent->BindAction("GreenGun", IE_Pressed, this, &AFPSCharacter::GreenGun);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AFPSCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AFPSCharacter::MoveRight);
@@ -127,6 +128,42 @@ void AFPSCharacter::SpawnBomb()
 	AFPSBombActor* MyBomb = GetWorld()->SpawnActor<AFPSBombActor>(BombClass, GetActorLocation(), GetActorRotation());
 }
 
+void AFPSCharacter::OrangeGun()
+{
+	ChangeGun(0);
+}
+
+void AFPSCharacter::PurpleGun()
+{
+	ChangeGun(1);
+}
+
+void AFPSCharacter::GreenGun()
+{
+	ChangeGun(2);
+}
+
+void AFPSCharacter::ChangeGun(int x)
+{
+	switch (x)
+	{
+	case 0:
+		//UE_LOG(LogTemp, Warning, TEXT("Orange"));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
+		break;
+	case 1:
+		//UE_LOG(LogTemp, Warning, TEXT("Purple"));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(0.5f, 0, 0.5f, 1));
+		break;
+	case 2:
+		//UE_LOG(LogTemp, Warning, TEXT("Green"));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(0,1,0,1));
+		break;
+	default:
+		break;
+	}
+}
+
 void AFPSCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
@@ -144,4 +181,12 @@ void AFPSCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
 	}
+}
+
+void AFPSCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	GunMaterialInst = UMaterialInstanceDynamic::Create(GunMeshComponent->GetMaterial(0), this);
+	GunMeshComponent->SetMaterial(0, GunMaterialInst);
+	GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
 }
