@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+#include "FPSCharacter.h"
 
 AFPSProjectile::AFPSProjectile() 
 {
@@ -28,12 +29,29 @@ AFPSProjectile::AFPSProjectile()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+
+	// Create a projectile mesh component
+	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
+	//FLinearColor rColor = FLinearColor::MakeRandomColor();
+	//ProjectileMaterialInst->SetVectorParameterValue("BulletColor", rColor);
 }
 
 
 void AFPSProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	//TArray<UStaticMeshComponent> StaticComps;
+	//AActor* gunMesh = GetInstigator()->FindComponentByClass<USkeletalMeshComponent>();
+	//GetComponents** <UStaticMeshComponent>** (StaticComps);
+	/*gunMesh = GetComponentsByTag(GetInstigator(), "GunMesh")(0);*/
+
+	//ACharacter* character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//USkeletalMeshComponent* playerGunMesh = fpsPlayer->GetComponentsByTag(fpsPlayer, "GunMesh");
+
+	//ProjectileMaterialInst = UMaterialInstanceDynamic::Create(playerGunMesh->GetMaterial(0), this);
+	//ProjectileMeshComp->SetMaterial(0, ProjectileMaterialInst);
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFPSProjectile::Explode, 3.0f, false);
@@ -41,7 +59,7 @@ void AFPSProjectile::BeginPlay()
 
 void AFPSProjectile::Explode()
 {
-	UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation(), FRotator::ZeroRotator, FVector(5.0f));
+	/*UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation(), FRotator::ZeroRotator, FVector(5.0f));*/
 
 	// Allow BP to trigger additional logic
 	BlueprintExplode();
@@ -55,30 +73,31 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 	// Only add impulse and destroy projectile if we hit a physics object
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		float RandomIntensity = FMath::RandRange(200.0f, 500.0f);
+		//float RandomIntensity = FMath::RandRange(50.0f, 100.0f);
 
-		OtherComp->AddImpulseAtLocation(GetVelocity() * RandomIntensity, GetActorLocation());
+		//OtherComp->AddImpulseAtLocation(GetVelocity() * RandomIntensity, GetActorLocation());
 
-		FVector Scale = OtherComp->GetComponentScale();
-		Scale *= 0.8f;
+		//FVector Scale = OtherComp->GetComponentScale();
+		//Scale *= 0.8f;
 
-		if (Scale.GetMin() < 0.5f)
-		{
-			OtherActor->Destroy();
-		}
-		else
-		{
-			OtherComp->SetWorldScale3D(Scale);
-		}
+		//if (Scale.GetMin() < 0.5f)
+		//{
+		//	OtherActor->Destroy();
+		//}
+		//else
+		//{
+		//	OtherComp->SetWorldScale3D(Scale);
+		//}
 
-		UMaterialInstanceDynamic* MatInst = OtherComp->CreateDynamicMaterialInstance(0);
-		if (MatInst)
-		{
-			FLinearColor NewColor = FLinearColor::MakeRandomColor();
+		//UMaterialInstanceDynamic* MatInst = OtherComp->CreateDynamicMaterialInstance(0);
+		//if (MatInst)
+		//{
+		//	FLinearColor NewColor = FLinearColor::MakeRandomColor();
 
-			MatInst->SetVectorParameterValue("Color", NewColor);
-		}
+		//	MatInst->SetVectorParameterValue("Color", NewColor);
+		//}
 
+		OtherActor->Destroy();
 		Explode();
 	}
 }

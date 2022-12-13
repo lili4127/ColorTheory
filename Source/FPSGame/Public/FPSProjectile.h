@@ -6,11 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "FPSProjectile.generated.h"
 
-
 class UProjectileMovementComponent;
 class USphereComponent;
-class UParticleSystem;
-
+//class UParticleSystem;
 
 UCLASS()
 class AFPSProjectile : public AActor
@@ -27,8 +25,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* ProjectileMovement;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	UParticleSystem* ExplosionFX;
+	/** Projectile mesh */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* ProjectileMeshComp;
+
+	/** Projectile material */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
+	UMaterialInstanceDynamic* ProjectileMaterialInst;
+
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
+	//UParticleSystem* ExplosionFX;
 
 	UFUNCTION()
 	void Explode();

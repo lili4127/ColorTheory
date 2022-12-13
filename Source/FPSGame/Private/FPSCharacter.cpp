@@ -49,6 +49,13 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
+void AFPSCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	GunMaterialInst = UMaterialInstanceDynamic::Create(GunMeshComponent->GetMaterial(0), this);
+	GunMeshComponent->SetMaterial(0, GunMaterialInst);
+	GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
+}
 
 void AFPSCharacter::Landed(const FHitResult& Hit)
 {
@@ -120,7 +127,7 @@ void AFPSCharacter::Fire()
 	}
 
 	// Play Muzzle FX
-	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
+	//UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
 void AFPSCharacter::SpawnBomb()
@@ -181,12 +188,4 @@ void AFPSCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
 	}
-}
-
-void AFPSCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	GunMaterialInst = UMaterialInstanceDynamic::Create(GunMeshComponent->GetMaterial(0), this);
-	GunMeshComponent->SetMaterial(0, GunMaterialInst);
-	GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
 }
