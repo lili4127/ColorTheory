@@ -4,25 +4,66 @@
 #include "FPSBombActor.h"
 #include <Kismet/GameplayStatics.h>
 #include "Engine/Engine.h"
-#include "Components/PrimitiveComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+#include "TimerManager.h"
 
 // Sets default values
 AFPSBombActor::AFPSBombActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Use a sphere as a simple collision representation
+	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	CollisionComp->InitSphereRadius(5.0f);
+	CollisionComp->SetCollisionProfileName("Projectile");
+	CollisionComp->OnComponentHit.AddDynamic(this, &AFPSBombActor::OnHit);	// set up a notification for when this component hits something blocking
 
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-	RootComponent = MeshComp;
+	// Players can't walk on it
+	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	CollisionComp->CanCharacterStepUpOn = ECB_No;
 
-	ExplodeDelay = 2.0f;
+	// Set as root component
+	RootComponent = CollisionComp;
+
+	// Use a ProjectileMovementComponent to govern this projectile's movement
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
+	ProjectileMovement->UpdatedComponent = CollisionComp;
+	ProjectileMovement->InitialSpeed = 4000.f;
+	ProjectileMovement->MaxSpeed = 4000.f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->bShouldBounce = false;
+
+	// Create a projectile mesh component
+	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
+	//FLinearColor rColor = FLinearColor::MakeRandomColor();
+	//ProjectileMaterialInst->SetVectorParameterValue("BulletColor", rColor);
+}
+
+void AFPSBombActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFPSBombActor::Explode, 2.0f, false);
+}
+
+void AFPSBombActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// Only explode bomb if we hit a physics object
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+	{
+		Explode();
+	}
+
+	Destroy();
 }
 
 void AFPSBombActor::Explode()
 {
-	UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionTemplate, GetActorLocation());
+	//UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionTemplate, GetActorLocation());
+	// Allow BP to trigger additional logic
+	BlueprintExplode();
 
 	FCollisionObjectQueryParams QueryParams;
 	QueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
@@ -37,46 +78,11 @@ void AFPSBombActor::Explode()
 	for (FOverlapResult Result : OutOverlaps)
 	{
 		UPrimitiveComponent* Overlap = Result.GetComponent();
+		AActor* OtherActor = Result.GetActor();
 		if (Overlap && Overlap->IsSimulatingPhysics())
 		{
-			UMaterialInstanceDynamic* MatInst = Overlap->CreateAndSetMaterialInstanceDynamic(0);
-			if (MatInst)
-			{
-				MatInst->SetVectorParameterValue("Color", TargetColor);
-			}
+			OtherActor->Destroy();
 		}
-	}
-
-	Destroy();
-}
-
-// Called when the game starts or when spawned
-void AFPSBombActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	FTimerHandle Explode_TimerHandle;
-	GetWorldTimerManager().SetTimer(Explode_TimerHandle, this, &AFPSBombActor::Explode, ExplodeDelay);
-
-	MaterialInst = MeshComp->CreateAndSetMaterialInstanceDynamic(0);
-	if (MaterialInst)
-	{
-		CurrentColor = MaterialInst->K2_GetVectorParameterValue("Color");
-	}
-
-	TargetColor = FLinearColor::MakeRandomColor();
-}
-
-// Called every frame
-void AFPSBombActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (MaterialInst)
-	{
-		float Progress = (GetWorld()->TimeSeconds - CreationTime) / ExplodeDelay;
-		FLinearColor NewColor = FLinearColor::LerpUsingHSV(CurrentColor, TargetColor, Progress);
-		MaterialInst->SetVectorParameterValue("Color", NewColor);
 	}
 }
 

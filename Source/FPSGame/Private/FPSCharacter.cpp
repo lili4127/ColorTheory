@@ -35,7 +35,6 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
 	PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &AFPSCharacter::SpawnBomb);
 	PlayerInputComponent->BindAction("OrangeGun", IE_Pressed, this, &AFPSCharacter::OrangeGun);
@@ -56,39 +55,6 @@ void AFPSCharacter::BeginPlay()
 	GunMeshComponent->SetMaterial(0, GunMaterialInst);
 	GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
 }
-
-void AFPSCharacter::Landed(const FHitResult& Hit)
-{
-	Super::Landed(Hit);
-
-	if (IsLocallyControlled())
-	{
-		/* Play landed camera anim */
-		APlayerController* PC = Cast<APlayerController>(GetController());
-		if (PC)
-		{
-			PC->PlayerCameraManager->StartCameraShake(LandedCameraShake);
-		}
-		//UGameplayStatics::PlaySound2D(this, LandedSound);
-	}
-}
-
-void AFPSCharacter::OnJumped_Implementation()
-{
-	Super::OnJumped_Implementation();
-
-	if (IsLocallyControlled())
-	{
-		/* Play jump camera anim */
-		APlayerController* PC = Cast<APlayerController>(GetController());
-		if (PC)
-		{
-			PC->PlayerCameraManager->StartCameraShake(JumpCameraShake);
-		}
-		//UGameplayStatics::PlaySound2D(this, JumpedSound);
-	}
-}
-
 
 void AFPSCharacter::Fire()
 {
@@ -132,7 +98,42 @@ void AFPSCharacter::Fire()
 
 void AFPSCharacter::SpawnBomb()
 {
-	AFPSBombActor* MyBomb = GetWorld()->SpawnActor<AFPSBombActor>(BombClass, GetActorLocation(), GetActorRotation());
+	// try and fire a projectile
+	if (BombClass)
+	{
+		// Grabs location from the mesh that must have a socket called "Muzzle" in his skeleton
+		FVector MuzzleLocation = GunMeshComponent->GetSocketLocation("Muzzle");
+		// Use controller rotation which is our view direction in first person
+		FRotator MuzzleRotation = GetControlRotation();
+
+		//Set Spawn Collision Handling Override
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+		ActorSpawnParams.Instigator = this;
+
+		// spawn the projectile at the muzzle
+		GetWorld()->SpawnActor<AFPSBombActor>(BombClass, MuzzleLocation, MuzzleRotation, ActorSpawnParams);
+	}
+
+	// try and play the sound if specified
+	if (FireSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+	}
+
+	// try and play a firing animation if specified
+	if (FireAnimation)
+	{
+		// Get the animation object for the arms mesh
+		UAnimInstance* AnimInstance = Mesh1PComponent->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->PlaySlotAnimationAsDynamicMontage(FireAnimation, "Arms", 0.0f);
+		}
+	}
+
+	// Play Muzzle FX
+	//UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
 void AFPSCharacter::OrangeGun()

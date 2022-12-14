@@ -28,7 +28,7 @@ AFPSProjectile::AFPSProjectile()
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->bShouldBounce = false;
 
 	// Create a projectile mesh component
 	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
@@ -98,6 +98,7 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		//}
 
 		OtherActor->Destroy();
-		Explode();
 	}
+
+	Explode();
 }
