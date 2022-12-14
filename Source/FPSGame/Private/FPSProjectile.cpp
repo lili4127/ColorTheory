@@ -25,14 +25,15 @@ AFPSProjectile::AFPSProjectile()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->InitialSpeed = 4000.f;
+	ProjectileMovement->MaxSpeed = 4000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
+	ProjectileMovement->ProjectileGravityScale = 0;
 
 	// Create a projectile mesh component
 	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
-	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
+	//ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
 	//FLinearColor rColor = FLinearColor::MakeRandomColor();
 	//ProjectileMaterialInst->SetVectorParameterValue("BulletColor", rColor);
 }
@@ -59,8 +60,6 @@ void AFPSProjectile::BeginPlay()
 
 void AFPSProjectile::Explode()
 {
-	/*UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation(), FRotator::ZeroRotator, FVector(5.0f));*/
-
 	// Allow BP to trigger additional logic
 	BlueprintExplode();
 

@@ -133,7 +133,7 @@ void AFPSCharacter::SpawnBomb()
 	}
 
 	// Play Muzzle FX
-	//UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
+	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
 void AFPSCharacter::OrangeGun()

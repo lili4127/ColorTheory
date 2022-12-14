@@ -8,6 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "TimerManager.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AFPSBombActor::AFPSBombActor()
@@ -28,16 +29,14 @@ AFPSBombActor::AFPSBombActor()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 4000.f;
-	ProjectileMovement->MaxSpeed = 4000.f;
+	ProjectileMovement->InitialSpeed = 4500.f;
+	ProjectileMovement->MaxSpeed = 4500.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
+	ProjectileMovement->ProjectileGravityScale = 0;
 
-	// Create a projectile mesh component
-	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
-	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
-	//FLinearColor rColor = FLinearColor::MakeRandomColor();
-	//ProjectileMaterialInst->SetVectorParameterValue("BulletColor", rColor);
+	//Create particle component
+	BombParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("BombParticle"));
 }
 
 void AFPSBombActor::BeginPlay()
@@ -61,7 +60,8 @@ void AFPSBombActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 
 void AFPSBombActor::Explode()
 {
-	//UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionTemplate, GetActorLocation());
+	UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation());
+	
 	// Allow BP to trigger additional logic
 	BlueprintExplode();
 

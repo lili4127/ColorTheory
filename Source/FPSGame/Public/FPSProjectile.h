@@ -8,7 +8,6 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
-//class UParticleSystem;
 
 UCLASS()
 class AFPSProjectile : public AActor
@@ -32,9 +31,6 @@ protected:
 	/** Projectile material */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
 	UMaterialInstanceDynamic* ProjectileMaterialInst;
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	//UParticleSystem* ExplosionFX;
 
 	UFUNCTION()
 	void Explode();

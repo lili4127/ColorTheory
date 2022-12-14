@@ -8,7 +8,8 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
-//class UParticleSystem;
+class UParticleSystem;
+class UParticleSystemComponent;
 
 UCLASS()
 class FPSGAME_API AFPSBombActor : public AActor
@@ -19,28 +20,23 @@ protected:
 
 	/** Sphere collision component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		USphereComponent* CollisionComp;
+	USphereComponent* CollisionComp;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		UProjectileMovementComponent* ProjectileMovement;
+	UProjectileMovementComponent* ProjectileMovement;
 
-	/** Projectile mesh */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		UStaticMeshComponent* ProjectileMeshComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PEffects")
+	UParticleSystemComponent* BombParticle;
 
-	/** Projectile material */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-		UMaterialInstanceDynamic* ProjectileMaterialInst;
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement")
-	//UParticleSystem* ExplosionFX;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PEffects")
+	UParticleSystem* ExplosionFX;
 
 	UFUNCTION()
-		void Explode();
+	void Explode();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void BlueprintExplode();
+	void BlueprintExplode();
 
 public:
 
