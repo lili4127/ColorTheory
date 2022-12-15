@@ -6,11 +6,24 @@
 #include "TextureResource.h"
 #include "CanvasItem.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
+#include "FPSCharacter.h"
+
+void AFPSHUD::ColorChangeEventFunction()
+{
+
+}
 
 AFPSHUD::AFPSHUD()
 {
+	CharacterActorReference = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (CharacterActorReference)
+	{
+		CharacterActorReference->OnColorChange.BindUObject(this, &AFPSHUD::ColorChangeEventFunction);
+	}
+
 	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/UI/FirstPersonCrosshair"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/UI/Crosshair"));
 	CrosshairTex = CrosshairTexObj.Object;
 }
 

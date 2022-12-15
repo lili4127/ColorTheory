@@ -16,6 +16,11 @@ class AFPSProjectile : public AActor
 
 protected:
 
+	void ColorChangeEventFunction();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class AFPSCharacter* CharacterActorReference;
+
 	/** Sphere collision component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	USphereComponent* CollisionComp;
@@ -37,6 +42,8 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BlueprintExplode();
+
+	FLinearColor CurrentColor;
 
 public:
 

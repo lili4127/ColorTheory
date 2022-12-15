@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "FPSCharacter.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AFPSProjectile::AFPSProjectile() 
 {
@@ -33,29 +34,32 @@ AFPSProjectile::AFPSProjectile()
 
 	// Create a projectile mesh component
 	ProjectileMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
-	//ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
-	//FLinearColor rColor = FLinearColor::MakeRandomColor();
-	//ProjectileMaterialInst->SetVectorParameterValue("BulletColor", rColor);
+	ProjectileMeshComp->SetupAttachment(CollisionComp);
+
+	CharacterActorReference = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (CharacterActorReference)
+	{
+		CharacterActorReference->OnColorChange.BindUObject(this, &AFPSProjectile::ColorChangeEventFunction);
+	}
 }
 
 
 void AFPSProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//TArray<UStaticMeshComponent> StaticComps;
-	//AActor* gunMesh = GetInstigator()->FindComponentByClass<USkeletalMeshComponent>();
-	//GetComponents** <UStaticMeshComponent>** (StaticComps);
-	/*gunMesh = GetComponentsByTag(GetInstigator(), "GunMesh")(0);*/
 
-	//ACharacter* character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	//USkeletalMeshComponent* playerGunMesh = fpsPlayer->GetComponentsByTag(fpsPlayer, "GunMesh");
-
-	//ProjectileMaterialInst = UMaterialInstanceDynamic::Create(playerGunMesh->GetMaterial(0), this);
-	//ProjectileMeshComp->SetMaterial(0, ProjectileMaterialInst);
+	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
+	ProjectileMaterialInst->SetVectorParameterValue("BulletColor", CharacterActorReference->GetCurrentColor());
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFPSProjectile::Explode, 3.0f, false);
+}
+
+
+void AFPSProjectile::ColorChangeEventFunction()
+{
+	CurrentColor = FLinearColor::MakeRandomColor();
+	UE_LOG(LogTemp, Warning, TEXT("Event working!"));
 }
 
 void AFPSProjectile::Explode()
@@ -65,7 +69,6 @@ void AFPSProjectile::Explode()
 
 	Destroy();
 }
-
 
 void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

@@ -15,6 +15,11 @@ class AFPSHUD : public AHUD
 
 protected:
 
+	void ColorChangeEventFunction();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class AFPSCharacter* CharacterActorReference;
+
 	/** Crosshair asset pointer */
 	UTexture2D* CrosshairTex;
 

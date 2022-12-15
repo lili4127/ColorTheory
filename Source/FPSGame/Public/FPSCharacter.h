@@ -15,6 +15,7 @@ class UAnimSequence;
 class UParticleSystem;
 class AFPSBombActor;
 
+DECLARE_DELEGATE(FOnColorChangeDelegate);
 UCLASS()
 class AFPSCharacter : public ACharacter
 {
@@ -36,6 +37,11 @@ protected:
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
+
+	FLinearColor OrangeColor;
+	FLinearColor PurpleColor;
+	FLinearColor GreenColor;
+	FLinearColor CurrentColor;
 
 public:
 	AFPSCharacter();
@@ -67,6 +73,9 @@ protected:
 	/** Spawn a bomb */
 	void SpawnBomb();
 
+	UFUNCTION()
+	void HandleColorChangeEvent();
+
 	/** Gun select */
 	void OrangeGun();
 
@@ -94,6 +103,10 @@ public:
 
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return CameraComponent; }
+
+	FLinearColor GetCurrentColor();
+
+	FOnColorChangeDelegate OnColorChange;
 
 };
 

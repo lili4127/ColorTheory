@@ -28,6 +28,10 @@ AFPSCharacter::AFPSCharacter()
 	GunMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
 	GunMeshComponent->CastShadow = false;
 	GunMeshComponent->SetupAttachment(Mesh1PComponent, "GripPoint");
+
+	OrangeColor = FLinearColor(1, 0.65f, 0, 1);
+	PurpleColor = FLinearColor(0.5f, 0, 0.5f, 1);
+	GreenColor = FLinearColor(0, 1, 0, 1);
 }
 
 void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -52,8 +56,14 @@ void AFPSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GunMaterialInst = UMaterialInstanceDynamic::Create(GunMeshComponent->GetMaterial(0), this);
+	GunMaterialInst->SetVectorParameterValue("BodyColor", OrangeColor);
 	GunMeshComponent->SetMaterial(0, GunMaterialInst);
-	GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
+	CurrentColor = OrangeColor;
+}
+
+FLinearColor AFPSCharacter::GetCurrentColor()
+{
+	return CurrentColor;
 }
 
 void AFPSCharacter::Fire()
@@ -136,6 +146,11 @@ void AFPSCharacter::SpawnBomb()
 	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
+void AFPSCharacter::HandleColorChangeEvent()
+{
+	OnColorChange.ExecuteIfBound();
+}
+
 void AFPSCharacter::OrangeGun()
 {
 	ChangeGun(0);
@@ -153,19 +168,24 @@ void AFPSCharacter::GreenGun()
 
 void AFPSCharacter::ChangeGun(int x)
 {
+	HandleColorChangeEvent();
+
 	switch (x)
 	{
 	case 0:
 		//UE_LOG(LogTemp, Warning, TEXT("Orange"));
-		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(1, 0.65f, 0, 1));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", OrangeColor);
+		CurrentColor = OrangeColor;
 		break;
 	case 1:
 		//UE_LOG(LogTemp, Warning, TEXT("Purple"));
-		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(0.5f, 0, 0.5f, 1));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", PurpleColor);
+		CurrentColor = PurpleColor;
 		break;
 	case 2:
 		//UE_LOG(LogTemp, Warning, TEXT("Green"));
-		GunMaterialInst->SetVectorParameterValue("BodyColor", FLinearColor(0,1,0,1));
+		GunMaterialInst->SetVectorParameterValue("BodyColor", GreenColor);
+		CurrentColor = GreenColor;
 		break;
 	default:
 		break;
