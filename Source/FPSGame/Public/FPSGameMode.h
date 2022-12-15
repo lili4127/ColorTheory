@@ -10,10 +10,6 @@ UCLASS()
 class AFPSGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-
-public:
-
-	AFPSGameMode();
 };
 
 
