@@ -2,4 +2,17 @@
 
 
 #include "FPSPlayerController.h"
+#include "GameFramework/Character.h"
 
+void AFPSPlayerController::SetPlayerEnabledState(bool playerEnabled)
+{
+	if (playerEnabled)
+	{
+		GetCharacter()->EnableInput(this);
+	}
+
+	else
+	{
+		GetCharacter()->DisableInput(this);
+	}
+}

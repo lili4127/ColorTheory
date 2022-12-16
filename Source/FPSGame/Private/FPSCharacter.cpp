@@ -29,8 +29,8 @@ AFPSCharacter::AFPSCharacter()
 	GunMeshComponent->CastShadow = false;
 	GunMeshComponent->SetupAttachment(Mesh1PComponent, "GripPoint");
 
-	OrangeColor = FLinearColor(1, 0.65f, 0, 1);
-	PurpleColor = FLinearColor(0.5f, 0, 0.5f, 1);
+	OrangeColor = FLinearColor(0.723055f, 0.095308f, 0.011612f, 1);
+	PurpleColor = FLinearColor(0.099899f, 0.019382f, 0.291771f, 1);
 	GreenColor = FLinearColor(0, 1, 0, 1);
 }
 
