@@ -5,25 +5,21 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
-
-// Sets default values
-AFPSEnemy::AFPSEnemy()
-{
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-}
+#include "FPSGameMode.h"
 
 // Called when the game starts or when spawned
 void AFPSEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
-// Called every frame
-void AFPSEnemy::Tick(float DeltaTime)
+void AFPSEnemy::HandleDestruction()
 {
-	Super::Tick(DeltaTime);
-
+	GameMode->ActorDied(this);
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
 }
+
+
 

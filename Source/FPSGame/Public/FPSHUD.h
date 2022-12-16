@@ -15,8 +15,6 @@ class AFPSHUD : public AHUD
 
 protected:
 
-	void ColorChangeEventFunction();
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AFPSCharacter* CharacterActorReference;
 
@@ -31,4 +29,3 @@ public:
 	virtual void DrawHUD() override;
 
 };
-

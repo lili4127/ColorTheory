@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "FPSCharacter.h"
+#include "FPSEnemy.h"
 #include "Materials/MaterialInstanceDynamic.h"
 
 AFPSProjectile::AFPSProjectile() 
@@ -37,12 +38,7 @@ AFPSProjectile::AFPSProjectile()
 	ProjectileMeshComp->SetupAttachment(CollisionComp);
 
 	CharacterActorReference = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (CharacterActorReference)
-	{
-		CharacterActorReference->OnColorChange.BindUObject(this, &AFPSProjectile::ColorChangeEventFunction);
-	}
 }
-
 
 void AFPSProjectile::BeginPlay()
 {
@@ -55,51 +51,22 @@ void AFPSProjectile::BeginPlay()
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFPSProjectile::Explode, 3.0f, false);
 }
 
-
-void AFPSProjectile::ColorChangeEventFunction()
-{
-	CurrentColor = FLinearColor::MakeRandomColor();
-	UE_LOG(LogTemp, Warning, TEXT("Event working!"));
-}
-
 void AFPSProjectile::Explode()
 {
 	// Allow BP to trigger additional logic
 	BlueprintExplode();
-
 	Destroy();
 }
 
 void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics object
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		//float RandomIntensity = FMath::RandRange(50.0f, 100.0f);
-
-		//OtherComp->AddImpulseAtLocation(GetVelocity() * RandomIntensity, GetActorLocation());
-
-		//FVector Scale = OtherComp->GetComponentScale();
-		//Scale *= 0.8f;
-
-		//if (Scale.GetMin() < 0.5f)
-		//{
-		//	OtherActor->Destroy();
-		//}
-		//else
-		//{
-		//	OtherComp->SetWorldScale3D(Scale);
-		//}
-
-		//UMaterialInstanceDynamic* MatInst = OtherComp->CreateDynamicMaterialInstance(0);
-		//if (MatInst)
-		//{
-		//	FLinearColor NewColor = FLinearColor::MakeRandomColor();
-
-		//	MatInst->SetVectorParameterValue("Color", NewColor);
-		//}
-
-		OtherActor->Destroy();
+		AFPSEnemy* Enemy = Cast<AFPSEnemy>(OtherActor);
+		if (Enemy)
+		{
+			Enemy->HandleDestruction();
+		}
 	}
 
 	Explode();

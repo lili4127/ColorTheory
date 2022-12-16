@@ -16,8 +16,6 @@ class AFPSProjectile : public AActor
 
 protected:
 
-	void ColorChangeEventFunction();
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AFPSCharacter* CharacterActorReference;
 

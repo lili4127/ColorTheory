@@ -146,11 +146,6 @@ void AFPSCharacter::SpawnBomb()
 	UGameplayStatics::SpawnEmitterAttached(MuzzleFlash, GunMeshComponent, "Muzzle");
 }
 
-void AFPSCharacter::HandleColorChangeEvent()
-{
-	OnColorChange.ExecuteIfBound();
-}
-
 void AFPSCharacter::OrangeGun()
 {
 	ChangeGun(0);
@@ -168,7 +163,6 @@ void AFPSCharacter::GreenGun()
 
 void AFPSCharacter::ChangeGun(int x)
 {
-	HandleColorChangeEvent();
 
 	switch (x)
 	{
@@ -200,7 +194,6 @@ void AFPSCharacter::MoveForward(float Value)
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
-
 
 void AFPSCharacter::MoveRight(float Value)
 {

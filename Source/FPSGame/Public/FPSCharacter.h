@@ -73,9 +73,6 @@ protected:
 	/** Spawn a bomb */
 	void SpawnBomb();
 
-	UFUNCTION()
-	void HandleColorChangeEvent();
-
 	/** Gun select */
 	void OrangeGun();
 
@@ -105,8 +102,6 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return CameraComponent; }
 
 	FLinearColor GetCurrentColor();
-
-	FOnColorChangeDelegate OnColorChange;
 
 };
 

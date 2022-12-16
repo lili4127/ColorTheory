@@ -3,9 +3,23 @@
 #include "FPSGameMode.h"
 #include "FPSHUD.h"
 #include "FPSCharacter.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Kismet/GameplayStatics.h"
 #include "FPSPlayerController.h"
+#include "FPSEnemy.h"
+#include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
+
+void AFPSGameMode::ActorDied(AActor* DeadActor)
+{
+	if (AFPSEnemy* Enemy = Cast<AFPSEnemy>(DeadActor))
+	{
+		Enemies--;
+
+		if (Enemies <= 0)
+		{
+			GameOver(true);
+		}
+	}
+}
 
 void AFPSGameMode::BeginPlay()
 {
@@ -31,4 +45,14 @@ void AFPSGameMode::HandleGameStart()
 		);
 		GetWorldTimerManager().SetTimer(PlayerEnableTimerHandle, PlayerEnableTimerDelegate, StartDelay, false);
 	}
+
+	Enemies = GetEnemyCount();
+	UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
+}
+
+int32 AFPSGameMode::GetEnemyCount()
+{
+	TArray<AActor*> EnemiesArr;
+	UGameplayStatics::GetAllActorsOfClass(this, AFPSEnemy::StaticClass(), EnemiesArr);
+	return EnemiesArr.Num();
 }
