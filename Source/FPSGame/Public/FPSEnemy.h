@@ -16,9 +16,13 @@ class FPSGAME_API AFPSEnemy : public APawn
 
 public:
 	void HandleDestruction();
+	int32 GetEnemyColor();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	class AFPSGameMode* GameMode;
+
+	UPROPERTY(BlueprintReadWrite, Category = Enemy)
+	int32 enemyColor = 0;
 };

@@ -17,8 +17,14 @@ void AFPSEnemy::BeginPlay()
 void AFPSEnemy::HandleDestruction()
 {
 	GameMode->ActorDied(this);
-	SetActorHiddenInGame(true);
-	SetActorTickEnabled(false);
+	Destroy();
+	//SetActorHiddenInGame(true);
+	//SetActorTickEnabled(false);
+}
+
+int32 AFPSEnemy::GetEnemyColor()
+{
+	return enemyColor;
 }
 
 

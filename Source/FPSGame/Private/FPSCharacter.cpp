@@ -59,11 +59,17 @@ void AFPSCharacter::BeginPlay()
 	GunMaterialInst->SetVectorParameterValue("BodyColor", OrangeColor);
 	GunMeshComponent->SetMaterial(0, GunMaterialInst);
 	CurrentColor = OrangeColor;
+	ColorType = 0;
 }
 
 FLinearColor AFPSCharacter::GetCurrentColor()
 {
 	return CurrentColor;
+}
+
+int32 AFPSCharacter::GetColorType()
+{
+	return ColorType;
 }
 
 void AFPSCharacter::Fire()
@@ -163,6 +169,7 @@ void AFPSCharacter::GreenGun()
 
 void AFPSCharacter::ChangeGun(int x)
 {
+	ColorType = x;
 
 	switch (x)
 	{

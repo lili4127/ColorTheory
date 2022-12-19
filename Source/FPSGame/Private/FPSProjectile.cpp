@@ -46,6 +46,7 @@ void AFPSProjectile::BeginPlay()
 
 	ProjectileMaterialInst = ProjectileMeshComp->CreateAndSetMaterialInstanceDynamic(0);
 	ProjectileMaterialInst->SetVectorParameterValue("BulletColor", CharacterActorReference->GetCurrentColor());
+	ColorType = CharacterActorReference->GetColorType();
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFPSProjectile::Explode, 3.0f, false);
@@ -54,7 +55,6 @@ void AFPSProjectile::BeginPlay()
 void AFPSProjectile::Explode()
 {
 	// Allow BP to trigger additional logic
-	BlueprintExplode();
 	Destroy();
 }
 
@@ -65,7 +65,15 @@ void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		AFPSEnemy* Enemy = Cast<AFPSEnemy>(OtherActor);
 		if (Enemy)
 		{
-			Enemy->HandleDestruction();
+			if (Enemy->GetEnemyColor() == ColorType)
+			{
+				Enemy->HandleDestruction();
+			}
+
+			else 
+			{
+				BlueprintExplode();
+			}
 		}
 	}
 

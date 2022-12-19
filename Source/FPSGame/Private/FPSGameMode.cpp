@@ -13,6 +13,7 @@ void AFPSGameMode::ActorDied(AActor* DeadActor)
 	if (AFPSEnemy* Enemy = Cast<AFPSEnemy>(DeadActor))
 	{
 		Enemies--;
+		UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
 
 		if (Enemies <= 0)
 		{

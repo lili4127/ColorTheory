@@ -42,6 +42,7 @@ protected:
 	FLinearColor PurpleColor;
 	FLinearColor GreenColor;
 	FLinearColor CurrentColor;
+	int32 ColorType = 0;
 
 public:
 	AFPSCharacter();
@@ -102,6 +103,7 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return CameraComponent; }
 
 	FLinearColor GetCurrentColor();
+	int32 GetColorType();
 
 };
 

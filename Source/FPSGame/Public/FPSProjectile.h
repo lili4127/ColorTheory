@@ -42,6 +42,7 @@ protected:
 	void BlueprintExplode();
 
 	FLinearColor CurrentColor;
+	int32 ColorType;
 
 public:
 
