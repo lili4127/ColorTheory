@@ -22,9 +22,9 @@ void AFPSEnemy::HandleDestruction()
 	//SetActorTickEnabled(false);
 }
 
-int32 AFPSEnemy::GetEnemyColor()
+FLinearColor AFPSEnemy::GetEnemyKillColor()
 {
-	return enemyColor;
+	return EnemyKillColor;
 }
 
 
