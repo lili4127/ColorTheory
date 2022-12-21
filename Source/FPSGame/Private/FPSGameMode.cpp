@@ -13,7 +13,7 @@ void AFPSGameMode::ActorDied(AActor* DeadActor)
 	if (AFPSEnemy* Enemy = Cast<AFPSEnemy>(DeadActor))
 	{
 		Enemies--;
-		UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
+		//UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
 
 		if (Enemies <= 0)
 		{
@@ -25,7 +25,11 @@ void AFPSGameMode::ActorDied(AActor* DeadActor)
 void AFPSGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	HandleGameStart();
+
+	if (UGameplayStatics::GetCurrentLevelName(GetWorld()).Equals("MainLevel"))
+	{
+		HandleGameStart();
+	}
 }
 
 void AFPSGameMode::HandleGameStart()
@@ -48,7 +52,7 @@ void AFPSGameMode::HandleGameStart()
 	}
 
 	Enemies = GetEnemyCount();
-	UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
+	//UE_LOG(LogTemp, Warning, TEXT("Enemies: %d"), Enemies);
 }
 
 int32 AFPSGameMode::GetEnemyCount()

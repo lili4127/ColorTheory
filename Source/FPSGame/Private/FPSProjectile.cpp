@@ -15,7 +15,6 @@ AFPSProjectile::AFPSProjectile()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->SetCollisionProfileName("Projectile");
-	//CollisionComp->OnComponentOverlap.AddDynamic(this, &AFPSProjectile::OnHit);	// set up a notification for when this component hits something blocking
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AFPSProjectile::OverlapBegin);
 
 	// Players can't walk on it
@@ -57,28 +56,6 @@ void AFPSProjectile::Explode()
 	// Allow BP to trigger additional logic
 	Destroy();
 }
-
-//void AFPSProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-//{
-//	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
-//	{
-//		AFPSEnemy* Enemy = Cast<AFPSEnemy>(OtherActor);
-//		if (Enemy)
-//		{
-//			if (Enemy->GetEnemyKillColor().Equals(ProjectileMaterialInst->K2_GetVectorParameterValue("BulletColor")))
-//			{
-//				Enemy->HandleDestruction();
-//			}
-//
-//			else 
-//			{
-//				BlueprintExplode();
-//			}
-//		}
-//	}
-//
-//	Explode();
-//}
 
 void AFPSProjectile::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

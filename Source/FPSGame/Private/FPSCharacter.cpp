@@ -40,7 +40,7 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	check(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
-	PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &AFPSCharacter::SpawnBomb);
+	//PlayerInputComponent->BindAction("SpawnBomb", IE_Pressed, this, &AFPSCharacter::SpawnBomb);
 	PlayerInputComponent->BindAction("OrangeGun", IE_Pressed, this, &AFPSCharacter::OrangeGun);
 	PlayerInputComponent->BindAction("PurpleGun", IE_Pressed, this, &AFPSCharacter::PurpleGun);
 	PlayerInputComponent->BindAction("GreenGun", IE_Pressed, this, &AFPSCharacter::GreenGun);
@@ -88,7 +88,7 @@ void AFPSCharacter::Fire()
 	// try and play the sound if specified
 	if (FireSound)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation(), 0.25f);
 	}
 
 	// try and play a firing animation if specified
